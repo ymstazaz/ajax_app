@@ -1,5 +1,21 @@
 // 手打ちで作成
 // 連動チェックにはconsole.log("イベント発火");を活用。都度削除する
+// JSはレイルズSじゃなくてグーグル画面の更新が必須！
+const buildHTML = (XHR) => {
+// 上に持ってくる時に関数ビルドHTMLとして定義する。その際にこの括りの最後にリターンHTMLをつける
+  const item = XHR.response.post;
+  const html = `
+    <div class="post">
+      <div class="post-date">
+        投稿日時：${item.created_at}
+      </div>
+      <div class="post-content">
+        ${item.content}
+      </div>
+    </div>`;
+  return html;
+};
+
 function post (){
   // console.log("イベント発火");
 // 連動してたらイベント発火とでるように設定。確認できたら削除
@@ -21,6 +37,26 @@ function post (){
     // レスポンスするデータフォーマットを指定（ジャバスクリプトではJSONを使うことが多い）
     XHR.send(formData);
     // リクエストを送信するメソッド。フォームに入力された内容をサーバー側におくるから、フォームデータ
+    XHR.onload = () => {
+      // リクエストに成功したらオンロード
+      if (XHR.status != 200) {
+        // HTTPステータスコードで成功（200）したら下記内容を表示して、だめだった時はエラー分がポップアップされる（エラー分の設定はしなくても勝手にでる）
+        alert(`Error ${XHR.status}: ${XHR.statusText}`);
+        return null;
+      };
+        // console.log(XHR.response);  ←内容確認のためのやつ
+      // レスポンス内容はresponseプロパティに自動で入ってるからこれを表示してでOK。
+      // コンソールでpostってでてたらおk
+      // 表示してほしい新しい投稿のフォーマット。新しい投稿は変数アイテムに格納して使用！
+      const list = document.getElementById("list");
+      const formText = document.getElementById("content");
+      // HTMLの情報はビルドHTMLでそのままごそっと上にあげてしまう。上で定義つけしたのをここに代入する↓
+      list.insertAdjacentHTML("afterend", buildHTML(XHR));
+      // afterbeginは要素内部の最初の子要素の直前を指す。これはそのほかも指定可能な文字列が決まってる
+      // に上のリストをいれこんでね！
+      formText.value = "";
+      // フォームのテキストのところを投稿するボタンを押したら消えるように設定
+    };
   });
 };
 
