@@ -1,3 +1,4 @@
+# Gemを追加したらbundle installを忘れない
 source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
@@ -73,3 +74,11 @@ end
 
 gem 'pry-rails'
 gem 'pry'
+
+# Renderを使用するにあたあって必要なPostgreSQLを連動させるための処理↓
+group :production do
+  gem 'pg'
+  # 終わったらターミナル上でデプロイ（ネットにあげること）用設定ファイルを
+  # binフォルダにrender-build.shって作業で作成する
+  # 
+end
